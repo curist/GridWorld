@@ -83,6 +83,18 @@ const GridWorld = {
       right: [0, 1],
     };
 
+    function canGoDirection(direction) {
+      const [ v, h ] = directions[direction];
+      const m = ctrl.current_m();
+      const n = ctrl.current_n();
+      const new_m = m + v;
+      const new_n = n + h;
+      if(new_m < 0 || new_m >= M || new_n < 0 || new_n >= N) {
+        return false;
+      }
+      return true;
+    }
+
     function handleAction(direction) {
       if(ctrl.reachedEndState()) {
         ctrl.resetStartPosition();
@@ -93,9 +105,9 @@ const GridWorld = {
       const n = ctrl.current_n();
       const new_m = m + v;
       const new_n = n + h;
-      if(new_m < 0 || new_m >= M || new_n < 0 || new_n >= N) {
+      if(!canGoDirection(direction)) {
         // out of bound
-        return updateQ(m, n, direction, -200);
+        return;
       }
 
       const reward = ctrl.maze[new_m][new_n];
@@ -146,7 +158,9 @@ const GridWorld = {
     };
 
     function traverse() {
-      const dirs = Object.keys(directions);
+      const dirs = Object.keys(directions).filter(dir => {
+        return canGoDirection(dir);
+      });
       if(Math.random() < EPSILON) {
         // take a random move
         const dir = dirs[Math.floor(Math.random() * dirs.length)];
