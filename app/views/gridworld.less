@@ -16,10 +16,14 @@
                 border: 1px solid black;
                 overflow: hidden;
 
-                &:hover, &.current {
+                &:hover, &.show {
                     & > .triangle {
                         opacity: 0.95;
                     }
+                }
+                &.current .text {
+                    font-size: 20px;
+                    z-index: 101;
                 }
 
                 & > .triangle {

@@ -172,10 +172,8 @@ const GridWorld = {
       }, 'toggle show q values'),
       m('.maze', ctrl.maze.map((row, x) => {
         return m('.row', row.map((grid, y) => {
-          let current = '';
-          if(ctrl.showQvalue() || x == current_m && y == current_n) {
-            current = '.current';
-          }
+          let current = (x == current_m && y == current_n) ? '.current' : '';
+          let show = ctrl.showQvalue() ? '.show' : '';
           // values
           const tvalue = Q(x, y, 'up');
           const tcolor = valueToColor(tvalue);
@@ -185,7 +183,7 @@ const GridWorld = {
           const bcolor = valueToColor(bvalue);
           const lvalue = Q(x, y, 'left');
           const lcolor = valueToColor(lvalue);
-          return m('.grid' + current, {
+          return m('.grid' + show + current, {
             style: {
               backgroundColor: valueToColor(grid)
             }
@@ -202,7 +200,13 @@ const GridWorld = {
             m('.triangle.left', {
               style: `border-left-color:${lcolor}`
             }, m('span', lvalue || '')),
-            m('.text', grid || ''),
+            m('.text', (function () {
+              if(current) {
+                return m.trust('&#9786;');
+              } else {
+                return grid || '';
+              }
+            })()),
           ]);
         }));
       })),
