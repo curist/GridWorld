@@ -16,7 +16,7 @@
                 border: 1px solid black;
                 overflow: hidden;
 
-                &:hover {
+                &:hover, &.current {
                     & > .triangle {
                         opacity: 0.95;
                     }
@@ -39,28 +39,24 @@
                     }
 
                     &.top {
-                        border-top: @tri-size solid pink;
                         & > span {
                             top: -@tri-size;
                             left: -2px;
                         }
                     }
                     &.right {
-                        border-right: @tri-size solid lightgreen;
                         & > span {
                             top: -0.5em;
                             right: -@tri-size + 2;
                         }
                     }
                     &.bottom {
-                        border-bottom: @tri-size solid yellow;
                         & > span {
                             bottom: -@tri-size;
                             left: -2px;
                         }
                     }
                     &.left {
-                        border-left: @tri-size solid gray;
                         & > span {
                             top: -0.5em;
                             left: -@tri-size + 2;
