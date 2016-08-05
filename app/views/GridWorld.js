@@ -90,12 +90,6 @@ const GridWorld = {
       }
     };
 
-    window.addEventListener('keydown', ctrl.handleKeyUp);
-
-    ctrl.onunload = () => {
-      window.removeEventListener('keydown', ctrl.handleKeyUp);
-    };
-
     ctrl.newMaze = () => {
       ctrl.maze = generateMaze(M, N);
       reset();
@@ -141,6 +135,16 @@ const GridWorld = {
         traverse();
         m.redraw();
       }, 30);
+    };
+
+    window.addEventListener('keydown', ctrl.handleKeyUp);
+
+    ctrl.onunload = () => {
+      window.removeEventListener('keydown', ctrl.handleKeyUp);
+      if(ctrl.interval) {
+        clearInterval(ctrl.interval);
+        ctrl.interval = null;
+      }
     };
 
   },

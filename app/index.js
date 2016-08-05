@@ -1,18 +1,15 @@
 import m from 'mithril';
-
-import { bindRoutes } from 'app/routes';
+import GridWorld from 'app/views/GridWorld';
 
 import 'normalize.css';
 
 function mountApplication() {
   const el = document.getElementById('app');
-  bindRoutes(el);
-  m.route(m.route());
+  m.mount(el, GridWorld);
 }
 
 function init() {
   require('app/styles/style.less');
-  require('app/actions');
 
   mountApplication();
 }
