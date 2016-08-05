@@ -8,11 +8,11 @@ const debug = require('debug')('app/views/GridWorld');
 
 import './gridworld.less';
 
-const ALPHA = 0.2;
+const ALPHA = 0.4;
 const GAMMA = 0.8;
-const EPSILON = 0.8;
-const M = 10;
-const N = 10;
+const EPSILON = 0.3;
+const M = 6;
+const N = 6;
 
 function valueToColor(value) {
   const weight = Math.min(Math.abs(value), 100) / 100;
@@ -32,6 +32,48 @@ const GridWorld = {
     ctrl.current_n = m.prop(0);
 
     ctrl.showQvalue = m.prop(false);
+
+    ctrl.speedLevel = m.prop(3);
+
+    ctrl.faster = () => {
+      const lv = ctrl.speedLevel();
+      if(lv < 5) {
+        ctrl.speedLevel(lv + 1);
+        ctrl.resetTraverse();
+      }
+    };
+
+    ctrl.slower = () => {
+      const lv = ctrl.speedLevel();
+      if(lv > 1) {
+        ctrl.speedLevel(lv - 1);
+        ctrl.resetTraverse();
+      }
+    };
+
+    ctrl.getSpeedText = () => {
+      const lv = ctrl.speedLevel();
+      const levels = {
+        1: 'slowest',
+        2: 'slow',
+        3: 'normal',
+        4: 'fast',
+        5: 'fastest'
+      };
+      return levels[lv];
+    };
+
+    ctrl.getSpeedMs = () => {
+      const lv = ctrl.speedLevel();
+      const levels = {
+        1: 1000,
+        2: 500,
+        3: 300,
+        4: 100,
+        5: 30,
+      };
+      return levels[lv];
+    };
 
     // available directions
     const directions = {
@@ -134,7 +176,17 @@ const GridWorld = {
       ctrl.interval = setInterval(() => {
         traverse();
         m.redraw();
-      }, 30);
+      }, ctrl.getSpeedMs());
+    };
+
+    ctrl.resetTraverse = () => {
+      if(ctrl.interval) {
+        clearInterval(ctrl.interval);
+      }
+      ctrl.interval = setInterval(() => {
+        traverse();
+        m.redraw();
+      }, ctrl.getSpeedMs());
     };
 
     window.addEventListener('keydown', ctrl.handleKeyUp);
@@ -152,6 +204,23 @@ const GridWorld = {
     const current_m = ctrl.current_m();
     const current_n = ctrl.current_n();
     return m('.GridWorld', [
+      m('p', [
+        m('h4', 'q learning parameters'),
+        m('ul', [
+          m('li', `learning rate: ${ALPHA}`),
+          m('li', `gamma: ${GAMMA}, how much we value future reward`),
+          m('li', `epsilon: ${EPSILON}, chance to take random action`),
+        ]),
+      ]),
+      m('.speed-control', [
+        m('button', {
+          onclick: ctrl.slower,
+        }, '-'),
+        m('span', ` speed: ${ctrl.getSpeedText()} `),
+        m('button', {
+          onclick: ctrl.faster,
+        }, '+'),
+      ]),
       m('button', {
         onclick: ctrl.newMaze.bind(ctrl),
       }, 'new maze'),
