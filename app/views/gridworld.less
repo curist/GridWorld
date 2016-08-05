@@ -1,0 +1,73 @@
+.GridWorld {
+    .maze {
+        .row {
+            display: flex;
+            .grid {
+                @size: 50px;
+                position: relative;
+                display: flex;
+                width: @size;
+                height: @size;
+                font-size: 8px;
+                justify-content: center;
+                align-items: center;
+                // absorb border
+                margin: -1px 0 0 -1px;
+                border: 1px solid black;
+                overflow: hidden;
+
+                & > .triangle {
+                    @tri-size: @size / 2;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 0px;
+                    height: 0px;
+                    border: @tri-size solid transparent;
+
+                    & > span {
+                        position: absolute;
+                        z-index: 100;
+                    }
+
+                    &.top {
+                        border-top: @tri-size solid pink;
+                        & > span {
+                            top: -@tri-size;
+                            left: -2px;
+                        }
+                    }
+                    &.right {
+                        border-right: @tri-size solid lightgreen;
+                        & > span {
+                            top: -0.5em;
+                            right: -@tri-size + 2;
+                        }
+                    }
+                    &.bottom {
+                        border-bottom: @tri-size solid yellow;
+                        & > span {
+                            bottom: -@tri-size;
+                            left: -2px;
+                        }
+                    }
+                    &.left {
+                        border-left: @tri-size solid gray;
+                        & > span {
+                            top: -0.5em;
+                            left: -@tri-size + 2;
+                        }
+                    }
+                }
+
+                .text {
+                }
+
+
+                &.goal {
+                    background-color: green;
+                }
+            }
+        }
+    }
+}
