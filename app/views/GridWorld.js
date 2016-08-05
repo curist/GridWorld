@@ -39,16 +39,16 @@ const GridWorld = {
       const lv = ctrl.speedLevel();
       if(lv < 5) {
         ctrl.speedLevel(lv + 1);
-        ctrl.resetTraverse();
       }
+      ctrl.resetTraverse();
     };
 
     ctrl.slower = () => {
       const lv = ctrl.speedLevel();
       if(lv > 1) {
         ctrl.speedLevel(lv - 1);
-        ctrl.resetTraverse();
       }
+      ctrl.resetTraverse();
     };
 
     ctrl.getSpeedText = () => {
@@ -136,7 +136,8 @@ const GridWorld = {
     ctrl.reachedEndState = () => {
       const m = ctrl.current_m();
       const n = ctrl.current_n();
-      return ctrl.maze[m][n] > 50;
+      const reward = ctrl.maze[m][n];
+      return reward> 50 || reward < -80;
     };
 
     ctrl.handleKeyUp = (e) => {
