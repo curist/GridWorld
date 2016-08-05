@@ -2,7 +2,7 @@ let qgrids = {};
 
 // actions = [up, right, down, left]
 
-export function init() {
+export function reset() {
   qgrids = {};
 }
 
@@ -15,7 +15,7 @@ function deepGet(obj, paths) {
 }
 
 export function Q(m, n, direction) {
-  return deepGet(qgrids, [m, n, direction]) || 0;
+  return Math.round(deepGet(qgrids, [m, n, direction]) || 0);
 }
 
 export function updateQ(m, n, direction, value) {

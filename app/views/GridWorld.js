@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 import { generateMaze } from 'app/maze';
-import { Q, updateQ } from 'app/qgrids';
+import { Q, updateQ, reset } from 'app/qgrids';
 
 
 const debug = require('debug')('app/views/GridWorld');
@@ -9,7 +9,7 @@ const debug = require('debug')('app/views/GridWorld');
 import './gridworld.less';
 
 const ALPHA = 0.2;
-const GAMMA = 0.5;
+const GAMMA = 0.8;
 const M = 10;
 const N = 10;
 
@@ -30,8 +30,8 @@ const GridWorld = {
     ctrl.current_m = m.prop(0);
     ctrl.current_n = m.prop(0);
 
-    // available actions
-    const actions = {
+    // available directions
+    const directions = {
       up: [-1, 0],
       down: [1, 0],
       left: [0, -1],
@@ -39,7 +39,7 @@ const GridWorld = {
     };
 
     function handleAction(direction) {
-      const [ v, h ] = actions[direction];
+      const [ v, h ] = directions[direction];
       const m = ctrl.current_m();
       const n = ctrl.current_n();
       const new_m = m + v;
@@ -48,6 +48,20 @@ const GridWorld = {
         // out of bound
         return updateQ(m, n, direction, -10000);
       }
+
+      const reward = ctrl.maze[new_m][new_n];
+      let maxNextQ = -Infinity;
+      Object.keys(directions).forEach(dir => {
+        const nextQ = Q(new_m, new_n, dir);
+        if(nextQ > maxNextQ) {
+          maxNextQ = nextQ;
+        }
+      });
+
+      const newQ = (1 - ALPHA) * Q(m, n, direction) + ALPHA * (reward + maxNextQ);
+      updateQ(m, n, direction, newQ);
+      ctrl.current_m(new_m);
+      ctrl.current_n(new_n);
     }
 
     ctrl.resetStartPosition = () => {
@@ -59,18 +73,18 @@ const GridWorld = {
     ctrl.resetStartPosition();
 
     ctrl.handleKeyUp = (e) => {
-      debug(e);
       const { key } = e;
       const direction = key.toLowerCase().replace('arrow', '');
-      if(actions[direction]) {
+      if(directions[direction]) {
         handleAction(direction);
+        m.redraw();
       }
     };
 
-    window.addEventListener('keyup', ctrl.handleKeyUp);
+    window.addEventListener('keydown', ctrl.handleKeyUp);
 
     ctrl.onunload = () => {
-      window.removeEventListener('keyup', ctrl.handleKeyUp);
+      window.removeEventListener('keydown', ctrl.handleKeyUp);
     };
 
   },
@@ -78,6 +92,9 @@ const GridWorld = {
     const current_m = ctrl.current_m();
     const current_n = ctrl.current_n();
     return m('.GridWorld', [
+      m('button',  {
+        onclick: reset,
+      }, 'reset q table'),
       m('.maze', ctrl.maze.map((row, x) => {
         return m('.row', row.map((grid, y) => {
           let current = '';
