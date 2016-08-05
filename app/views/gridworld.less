@@ -16,6 +16,12 @@
                 border: 1px solid black;
                 overflow: hidden;
 
+                &:hover {
+                    & > .triangle {
+                        opacity: 0.95;
+                    }
+                }
+
                 & > .triangle {
                     @tri-size: @size / 2;
                     position: absolute;
@@ -24,6 +30,8 @@
                     width: 0px;
                     height: 0px;
                     border: @tri-size solid transparent;
+                    opacity: 0.15;
+                    transition: opacity 0.3s ease;
 
                     & > span {
                         position: absolute;
@@ -58,14 +66,6 @@
                             left: -@tri-size + 2;
                         }
                     }
-                }
-
-                .text {
-                }
-
-
-                &.goal {
-                    background-color: green;
                 }
             }
         }

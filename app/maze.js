@@ -14,7 +14,7 @@ export function generateMaze(m, n) {
       if(Math.random() < 0.15) {
         num = -100;
       } else if (Math.random() < 0.3) {
-        num = -10;
+        num = -30;
       }
       row.push(num);
     }
