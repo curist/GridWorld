@@ -10,7 +10,7 @@ import './gridworld.less';
 
 const ALPHA = 0.4;
 const GAMMA = 0.8;
-const EPSILON = 0.3;
+const EPSILON = 0.8;
 const M = 6;
 const N = 6;
 
@@ -34,6 +34,10 @@ const GridWorld = {
     ctrl.showQvalue = m.prop(false);
 
     ctrl.speedLevel = m.prop(3);
+
+    ctrl.epsilon = m.prop(EPSILON);
+
+    ctrl.epsilons = [ 1, 0.8, 0.5, 0.3, 0 ];
 
     ctrl.faster = () => {
       const lv = ctrl.speedLevel();
@@ -162,7 +166,7 @@ const GridWorld = {
       const dirs = Object.keys(directions).filter(dir => {
         return canGoDirection(dir);
       });
-      if(Math.random() < EPSILON) {
+      if(Math.random() < ctrl.epsilon()) {
         // take a random move
         const dir = dirs[Math.floor(Math.random() * dirs.length)];
         handleAction(dir);
@@ -219,12 +223,33 @@ const GridWorld = {
     const current_m = ctrl.current_m();
     const current_n = ctrl.current_n();
     return m('.GridWorld', [
+      m('h1', 'Gridworld'),
+      m('p', [
+        m('a', {
+          href: 'https://en.wikipedia.org/wiki/Q-learning'
+        }, 'Q Learning'),
+        m('br'),
+        m('a', {
+          href: 'http://cs.stanford.edu/people/karpathy/reinforcejs/gridworld_td.html'
+        }, 'Gridworld, a nice looking version'),
+      ]),
       m('p', [
         m('h4', 'q learning parameters'),
         m('ul', [
           m('li', `learning rate: ${ALPHA}`),
           m('li', `gamma: ${GAMMA}, how much we value future reward`),
-          m('li', `epsilon: ${EPSILON}, chance to take random action`),
+          m('li', m('span', [
+            'epsilon: ',
+            m('select', {
+              value: ctrl.epsilon(),
+              onchange: m.withAttr('value', ctrl.epsilon),
+            }, ctrl.epsilons.map(eps => {
+              return m('option', {
+                value: eps,
+              }, eps);
+            })),
+            ', chance to take random action',
+          ])),
         ]),
       ]),
       m('.speed-control', [
